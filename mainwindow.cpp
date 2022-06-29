@@ -22,9 +22,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->nsiInt->setText(QString::number(4));
-    ui->IdStringInt->setText(QString("|var|PAC120-PXX01-3X-XX-XX.Application.GVL.mi_testINT"));
-    ui->lineEdit_URL->setText(QString("opc.tcp://169.254.116.116:4840"));
+    //ui->nsiInt->setText(QString::number(4));
+    //ui->IdStringInt->setText(QString("|var|PAC120-PXX01-3X-XX-XX.Application.GVL.mi_testINT"));
+    //ui->lineEdit_URL->setText(QString("opc.tcp://169.254.116.116:4840"));
+    ui->ValueBoolCheck->setVisible(0);      //hide the checkbox widget which is only for temp test
+    ui->ValueBool->setVisible(0);      //hide the checkbox widget which is only for temp test
 }
 
 MainWindow::~MainWindow()
@@ -32,29 +34,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::chgEnable(boolean enable)
-{
-    ui->nsiInt->setDisabled(enable);
-    ui->IdStringInt->setDisabled(enable);
-    ui->ValueInt->setDisabled(enable);
-    ui->BtnReadInt->setDisabled(enable);
-    ui->BtnWriteInt->setDisabled(enable);
-    ui->nsiBool->setDisabled(enable);
-    ui->nsiReal->setDisabled(enable);
-    ui->nsiString->setDisabled(enable);
-    ui->IdStringBool->setDisabled(enable);
-    ui->IdStringReal->setDisabled(enable);
-    ui->IdStringString->setDisabled(enable);
-    ui->ValueBool->setDisabled(enable);
-    ui->ValueReal->setDisabled(enable);
-    ui->ValueString->setDisabled(enable);
-    ui->BtnReadBool->setDisabled(enable);
-    ui->BtnReadReal->setDisabled(enable);
-    ui->BtnReadString->setDisabled(enable);
-    ui->BtnWriteBool->setDisabled(enable);
-    ui->BtnWriteReal->setDisabled(enable);
-    ui->BtnWriteString->setDisabled(enable);
-}
+
 
 #ifdef UA_ENABLE_SUBSCRIPTIONS
 static void
@@ -79,15 +59,7 @@ nodeIter(UA_NodeId childId, UA_Boolean isInverse, UA_NodeId referenceTypeId, voi
 
 
 
-
-
-
-
-
-
-
-
-//new implementation by zhzg===============@June. 2022
+//new implementation by zhzg===============@June. 2022===========================
 
 
 void MainWindow::on_btnConnect_clicked()                //create the connection to defined server
@@ -342,6 +314,13 @@ void MainWindow::on_BtnReadBool_clicked()       //Boolean value <- codesys bool 
     if(retval == UA_STATUSCODE_GOOD && UA_Variant_isScalar(val) && val->type == &UA_TYPES[UA_TYPES_BOOLEAN]) {
             value = *(UA_Boolean*)val->data;
             ui->ValueBool->setText(QString::number(value));
+            if (value){
+                ui->ValueBoolCheck->setCheckState(Qt::Checked);
+                ui->ValueBoolSpin->setValue(1);
+            }else{
+                ui->ValueBoolCheck->setCheckState(Qt::Unchecked);
+                ui->ValueBoolSpin->setValue(0);
+            }
             print("the value is: %d\n", value);
     }else{
         printf("read error\n");ui->ValueBool->setText("");
@@ -354,7 +333,9 @@ void MainWindow::on_BtnReadBool_clicked()       //Boolean value <- codesys bool 
 
 void MainWindow::on_BtnWriteBool_clicked()       //Boolean value -> codesys bool variable
 {
-    bool value = ui->ValueBool->text().toFloat();         //convert input string value to float value
+    //bool value = ui->ValueBool->text().toInt();         //convert input string value to boolean value
+    //bool value = ui->ValueBoolCheck->isChecked();         //convert input string value to boolean value
+    bool value = ui->ValueBoolSpin->value();
 
     /* Write node attribute (using the highlevel API) */
     int nsi = ui->nsiBool->text().toInt();       //NameSpaceIndex
@@ -377,9 +358,28 @@ void MainWindow::on_BtnWriteBool_clicked()       //Boolean value -> codesys bool
     fflush(stdout);
 }
 
-
-//void MainWindow::on_btnDisconnect_clicked()
-//{
-
-//}
-
+void MainWindow::chgEnable(boolean enable)
+{
+    ui->nsiInt->setDisabled(enable);
+    ui->IdStringInt->setDisabled(enable);
+    ui->ValueInt->setDisabled(enable);
+    ui->BtnReadInt->setDisabled(enable);
+    ui->BtnWriteInt->setDisabled(enable);
+    ui->nsiBool->setDisabled(enable);
+    ui->nsiReal->setDisabled(enable);
+    ui->nsiString->setDisabled(enable);
+    ui->IdStringBool->setDisabled(enable);
+    ui->IdStringReal->setDisabled(enable);
+    ui->IdStringString->setDisabled(enable);
+    ui->ValueBool->setDisabled(enable);
+    ui->ValueReal->setDisabled(enable);
+    ui->ValueString->setDisabled(enable);
+    ui->BtnReadBool->setDisabled(enable);
+    ui->BtnReadReal->setDisabled(enable);
+    ui->BtnReadString->setDisabled(enable);
+    ui->BtnWriteBool->setDisabled(enable);
+    ui->BtnWriteReal->setDisabled(enable);
+    ui->BtnWriteString->setDisabled(enable);
+    ui->ValueBoolCheck->setDisabled(enable);
+    ui->ValueBoolSpin->setDisabled(enable);
+}
