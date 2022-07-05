@@ -20,6 +20,7 @@ public:
     UA_Client *client;
     UA_StatusCode retval;
     void chgEnable(boolean enable);         //function that set/reset the widgets' enable attribute on window
+    void fReadInt();
 
 private slots:
 //    void on_pushButton_connect_clicked();
@@ -51,8 +52,6 @@ private slots:
     void on_BtnReadInt_clicked();
 
     void on_btnConnect_clicked();
-
-    //void on_btnDisconnect_clicked();
 
 private:
     Ui::MainWindow *ui;

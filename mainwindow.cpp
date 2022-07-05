@@ -12,9 +12,9 @@ char display_str[2000];
         printf(format, ##__VA_ARGS__);                          \
     } while (0)
 
-//memset(display_str, 0, sizeof(display_str));            \
-//sprintf(display_str, format, ##__VA_ARGS__);            \
-//ui->textEdit->append(display_str);                      \
+//memset(display_str, 0, sizeof(display_str));
+//sprintf(display_str, format, ##__VA_ARGS__);
+//ui->textEdit->append(display_str);
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -153,6 +153,7 @@ void MainWindow::on_BtnReadInt_clicked()                   //INT16 value <- code
 
     fflush(stdout);
     UA_Variant_delete(val);
+//    fReadInt();
 }
 
 
@@ -382,4 +383,31 @@ void MainWindow::chgEnable(boolean enable)
     ui->BtnWriteString->setDisabled(enable);
     ui->ValueBoolCheck->setDisabled(enable);
     ui->ValueBoolSpin->setDisabled(enable);
+}
+
+void MainWindow::fReadInt(){
+    UA_Int16 value = 0;
+
+    /* Read attribute */
+    int nsi = ui->nsiInt->text().toInt();   //namespaceIndex -> nsi
+    UA_Variant *val = UA_Variant_new();
+
+    QString str = ui->IdStringInt->text();   //identifier.string -> str
+    char *isting;
+    QByteArray ba = str.toLatin1();
+    isting = ba.data();
+    print("\nReading the value of node (%d, \"%s\"):\n",nsi, isting);
+
+    retval = UA_Client_readValueAttribute(client, UA_NODEID_STRING(nsi, isting), val);
+    if(retval == 0 && UA_Variant_isScalar(val) &&
+       val->type == &UA_TYPES[UA_TYPES_INT16]) {    //UA_TYPES_INT32 -> INT16, codesys use int16 for INT variable
+            value = *(UA_Int16*)val->data;          //use int16 to instead of int32
+            ui->ValueInt->setText(QString::number(value));
+            print("the value is: %i\n", value);
+    }else{
+        printf("read error\n");ui->ValueInt->setText("");
+    }
+
+    fflush(stdout);
+    UA_Variant_delete(val);
 }
